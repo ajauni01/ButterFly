@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Butterfly.Mobile.ViewModels"
+             xmlns:dto="clr-namespace:Butterfly.Shared.Dtos;assembly=Butterfly.Shared"
+             x:DataType="vm:CareManagerViewModel"
+             x:Class="Butterfly.Mobile.Views.CareManagerPage"
+             Title="My Mentees">
+    <Grid RowDefinitions="Auto,*">
+        <Button Grid.Row="0" Text="+ New mentee profile" Command="{Binding ToggleFormCommand}" Margin="16,8" />
+
+        <RefreshView Grid.Row="1" Command="{Binding LoadCommand}" IsRefreshing="{Binding IsBusy}">
+            <ScrollView>
+                <VerticalStackLayout Padding="16" Spacing="12">
+
+                    <Label Text="{Binding ErrorMessage}" IsVisible="{Binding HasError}" TextColor="Red" />
+
+                    <!-- Create form -->
+                    <Frame IsVisible="{Binding IsFormVisible}" BorderColor="#512BD4" Padding="16">
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="New mentee (saved as Pending for admin approval)" FontAttributes="Bold" />
+                            <Entry Text="{Binding DisplayName}" Placeholder="First name / pseudonym only" />
+                            <Entry Text="{Binding Age}" Placeholder="Age (1-17)" Keyboard="Numeric" />
+                            <Entry Text="{Binding Region}" Placeholder="Region / village (no address)" />
+                            <Editor Text="{Binding Story}" Placeholder="Their story" AutoSize="TextChanges" HeightRequest="80" />
+                            <Entry Text="{Binding Tags}" Placeholder="Tags, comma-separated" />
+                            <Button Text="Create" Command="{Binding CreateCommand}" IsEnabled="{Binding IsNotBusy}" />
+                        </VerticalStackLayout>
+                    </Frame>
+
+                    <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+
+                    <CollectionView ItemsSource="{Binding Profiles}">
+                        <CollectionView.EmptyView>
+                            <Label Text="No mentee profiles yet. Tap “New mentee profile” to add one." TextColor="Gray" />
+                        </CollectionView.EmptyView>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="dto:MenteeProfileDto">
+                                <Frame Margin="0,4" Padding="12" BorderColor="LightGray">
+                                    <VerticalStackLayout Spacing="2">
+                                        <Label FontAttributes="Bold" FontSize="16" Text="{Binding DisplayName}" />
+                                        <Label FontSize="12" TextColor="Gray" Text="{Binding Region}" />
+                                        <Label FontSize="12" FontAttributes="Bold"
+                                               Text="{Binding ProfileStatus, StringFormat='Status: {0}'}" />
+                                    </VerticalStackLayout>
+                                </Frame>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                </VerticalStackLayout>
+            </ScrollView>
+        </RefreshView>
+    </Grid>
+</ContentPage>

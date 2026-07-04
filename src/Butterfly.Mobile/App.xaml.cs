@@ -1,11 +1,15 @@
-﻿namespace Butterfly.Mobile;
+using Butterfly.Mobile.Views;
+
+namespace Butterfly.Mobile;
 
 public partial class App : Application
 {
-	public App()
-	{
-		InitializeComponent();
+    public App(IServiceProvider services)
+    {
+        InitializeComponent();
 
-		MainPage = new AppShell();
-	}
+        // Start at sign-in. After authentication, AppNavigator swaps the root page to the
+        // dashboard matching the user's role claim.
+        MainPage = new NavigationPage(services.GetRequiredService<LoginPage>());
+    }
 }

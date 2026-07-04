@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Butterfly.Mobile.ViewModels"
+             x:DataType="vm:LoginViewModel"
+             x:Class="Butterfly.Mobile.Views.LoginPage"
+             Title="Butterfly">
+    <Grid RowDefinitions="*,Auto,*" Padding="32">
+        <VerticalStackLayout Grid.Row="1" Spacing="16" HorizontalOptions="Center">
+            <Label Text="🦋" FontSize="64" HorizontalOptions="Center" />
+            <Label Text="Butterfly"
+                   FontSize="32" FontAttributes="Bold" HorizontalOptions="Center" />
+            <Label Text="Cross-border micro-mentorship"
+                   FontSize="16" HorizontalOptions="Center" HorizontalTextAlignment="Center" />
+
+            <Button Text="Sign in with Entra"
+                    Command="{Binding SignInCommand}"
+                    IsEnabled="{Binding IsNotBusy}"
+                    Margin="0,24,0,0" />
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+
+            <Label Text="{Binding ErrorMessage}"
+                   IsVisible="{Binding HasError}"
+                   TextColor="Red" HorizontalTextAlignment="Center" />
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>

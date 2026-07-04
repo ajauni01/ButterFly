@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Butterfly.Mobile.ViewModels"
+             x:DataType="vm:SurveyViewModel"
+             x:Class="Butterfly.Mobile.Views.SurveyPage"
+             Title="Your Values &amp; Interests">
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="12">
+            <Label Text="Enter comma-separated tags. We use these to find a mentee who shares them." />
+
+            <Label Text="Values" FontAttributes="Bold" />
+            <Entry Text="{Binding Values}" Placeholder="e.g. discipline, resilience, education" />
+
+            <Label Text="Interests" FontAttributes="Bold" />
+            <Entry Text="{Binding Interests}" Placeholder="e.g. music, sports, mathematics" />
+
+            <Button Text="Save survey" Command="{Binding SaveCommand}" IsEnabled="{Binding IsNotBusy}" Margin="0,12,0,0" />
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+            <Label Text="{Binding ErrorMessage}" IsVisible="{Binding HasError}" TextColor="Red" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

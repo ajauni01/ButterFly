@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Butterfly.Mobile.ViewModels"
+             xmlns:dto="clr-namespace:Butterfly.Shared.Dtos;assembly=Butterfly.Shared"
+             x:DataType="vm:MentorViewModel"
+             x:Name="PageRoot"
+             x:Class="Butterfly.Mobile.Views.MentorPage"
+             Title="Find a Mentee">
+    <Grid RowDefinitions="Auto,*">
+        <!-- States -->
+        <ActivityIndicator Grid.Row="0" IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Margin="0,8" />
+
+        <RefreshView Grid.Row="1" Command="{Binding LoadCommand}" IsRefreshing="{Binding IsBusy}">
+            <ScrollView>
+                <VerticalStackLayout Padding="16" Spacing="12">
+
+                    <Label Text="{Binding ErrorMessage}" IsVisible="{Binding HasError}" TextColor="Red" />
+
+                    <!-- Survey prompt (first run) -->
+                    <Frame IsVisible="{Binding NeedsSurvey}" BorderColor="#512BD4" Padding="16">
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="Tell us your values &amp; interests" FontAttributes="Bold" FontSize="18" />
+                            <Label Text="We match you with a mentee who shares them." />
+                            <Button Text="Take the survey" Clicked="OnTakeSurvey" />
+                        </VerticalStackLayout>
+                    </Frame>
+
+                    <!-- Matches -->
+                    <Label Text="Your matches" FontSize="20" FontAttributes="Bold"
+                           IsVisible="{Binding NeedsSurvey, Converter={StaticResource Not}}" />
+                    <CollectionView ItemsSource="{Binding Matches}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="dto:MenteeMatchDto">
+                                <Frame Margin="0,4" Padding="12" BorderColor="LightGray">
+                                    <VerticalStackLayout Spacing="4">
+                                        <Label FontAttributes="Bold" FontSize="16"
+                                               Text="{Binding Profile.DisplayName}" />
+                                        <Label FontSize="12" TextColor="Gray"
+                                               Text="{Binding Profile.Region}" />
+                                        <Label Text="{Binding Profile.Story}" MaxLines="3" LineBreakMode="TailTruncation" />
+                                        <Label FontSize="12" TextColor="#512BD4"
+                                               Text="{Binding MatchScore, StringFormat='Match score: {0}'}" />
+                                        <Button Text="Mentor this person"
+                                                HorizontalOptions="Start"
+                                                Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.MentorCommand}"
+                                                CommandParameter="{Binding .}" />
+                                    </VerticalStackLayout>
+                                </Frame>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <!-- My mentorships -->
+                    <Label Text="My mentorships" FontSize="20" FontAttributes="Bold" Margin="0,12,0,0" />
+                    <CollectionView ItemsSource="{Binding Mentorships}">
+                        <CollectionView.EmptyView>
+                            <Label Text="You haven't started any mentorships yet." TextColor="Gray" />
+                        </CollectionView.EmptyView>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="dto:MentorshipDto">
+                                <Frame Margin="0,4" Padding="12" BorderColor="LightGray">
+                                    <VerticalStackLayout Spacing="2">
+                                        <Label FontAttributes="Bold" Text="{Binding MenteeDisplayName}" />
+                                        <Label FontSize="12" TextColor="Gray"
+                                               Text="{Binding RelationshipType, StringFormat='{0} • '}" />
+                                        <Label FontSize="12" Text="{Binding Status}" />
+                                    </VerticalStackLayout>
+                                </Frame>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                </VerticalStackLayout>
+            </ScrollView>
+        </RefreshView>
+    </Grid>
+</ContentPage>

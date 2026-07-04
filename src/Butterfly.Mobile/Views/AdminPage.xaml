@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Butterfly.Mobile.ViewModels"
+             xmlns:dto="clr-namespace:Butterfly.Shared.Dtos;assembly=Butterfly.Shared"
+             x:DataType="vm:AdminViewModel"
+             x:Name="PageRoot"
+             x:Class="Butterfly.Mobile.Views.AdminPage"
+             Title="Pending Approvals">
+    <Grid RowDefinitions="Auto,*">
+        <ActivityIndicator Grid.Row="0" IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Margin="0,8" />
+
+        <RefreshView Grid.Row="1" Command="{Binding LoadCommand}" IsRefreshing="{Binding IsBusy}">
+            <ScrollView>
+                <VerticalStackLayout Padding="16" Spacing="12">
+
+                    <Label Text="{Binding ErrorMessage}" IsVisible="{Binding HasError}" TextColor="Red" />
+
+                    <CollectionView ItemsSource="{Binding Pending}">
+                        <CollectionView.EmptyView>
+                            <Label Text="Nothing pending. All caught up! 🎉" TextColor="Gray" />
+                        </CollectionView.EmptyView>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="dto:MenteeProfileDto">
+                                <Frame Margin="0,4" Padding="12" BorderColor="LightGray">
+                                    <VerticalStackLayout Spacing="6">
+                                        <Label FontAttributes="Bold" FontSize="16" Text="{Binding DisplayName}" />
+                                        <Label FontSize="12" TextColor="Gray"
+                                               Text="{Binding Region, StringFormat='{0} • '}" />
+                                        <Label Text="{Binding Story}" MaxLines="4" LineBreakMode="TailTruncation" />
+                                        <HorizontalStackLayout Spacing="8">
+                                            <Button Text="Approve"
+                                                    Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.ApproveCommand}"
+                                                    CommandParameter="{Binding .}" />
+                                            <Button Text="Reject" BackgroundColor="#B00020"
+                                                    Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RejectCommand}"
+                                                    CommandParameter="{Binding .}" />
+                                        </HorizontalStackLayout>
+                                    </VerticalStackLayout>
+                                </Frame>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                </VerticalStackLayout>
+            </ScrollView>
+        </RefreshView>
+    </Grid>
+</ContentPage>
