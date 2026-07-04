@@ -4,6 +4,10 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <!-- Emit XML docs so the API's Swagger UI can surface DTO descriptions; validates <see cref> links. -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <!-- Not every public member needs a doc comment. -->
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
   </PropertyGroup>
 
 </Project>
