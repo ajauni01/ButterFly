@@ -1,0 +1,41 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet --version)",
+      "Bash(dotnet --list-sdks)",
+      "Bash(dotnet workload *)",
+      "Bash(az --version)",
+      "Bash(git --version)",
+      "Bash(sw_vers)",
+      "Read(//usr/local/share/dotnet/**)",
+      "Bash(touch /usr/local/share/dotnet/.writetest)",
+      "Bash(rm /usr/local/share/dotnet/.writetest)",
+      "Bash(curl -sSL https://dot.net/v1/dotnet-install.sh -o /private/tmp/claude-501/-Users-aunik-Projects-ButterFly/49c417e6-577a-413b-86ed-8bf82a6b32f5/scratchpad/dotnet-install.sh)",
+      "Bash(chmod +x /private/tmp/claude-501/-Users-aunik-Projects-ButterFly/49c417e6-577a-413b-86ed-8bf82a6b32f5/scratchpad/dotnet-install.sh)",
+      "Bash(/private/tmp/claude-501/-Users-aunik-Projects-ButterFly/49c417e6-577a-413b-86ed-8bf82a6b32f5/scratchpad/dotnet-install.sh --channel 8.0 --install-dir /Users/aunik/.dotnet)",
+      "Bash(export DOTNET_ROOT=\"$HOME/.dotnet\")",
+      "Bash(export DOTNET_CLI_TELEMETRY_OPTOUT=1)",
+      "Bash(export DOTNET_NOLOGO=1)",
+      "Bash(/Users/aunik/.dotnet/dotnet --version)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(kill -9 83622 83620)",
+      "Read(//Users/aunik/.dotnet/sdk/**)",
+      "Bash(/Users/aunik/.dotnet/dotnet --list-runtimes)",
+      "Bash(codesign -vv /Users/aunik/.dotnet/dotnet)",
+      "Bash(xattr -l /Users/aunik/.dotnet/dotnet)",
+      "Read(//Users/aunik/.dotnet/**)",
+      "Bash(timeout 20 /usr/local/share/dotnet/dotnet --version)",
+      "Bash(echo \"system dotnet exit: $?\")",
+      "Read(//Users/aunik/**)",
+      "Bash(echo \"grep exit: $?\")",
+      "Bash(/Users/aunik/.dotnet/dotnet workload *)",
+      "Bash(/Users/aunik/.dotnet/dotnet new *)",
+      "Bash(git init *)",
+      "Bash(git config *)",
+      "Bash(echo \"git user: $\\(git config user.name\\) <$\\(git config user.email\\)>\")",
+      "Bash(/usr/libexec/java_home -V)",
+      "Read(//Applications/Android Studio.app/Contents/jbr/Contents/Home/bin/**)",
+      "Bash(\"/Applications/Android Studio.app/Contents/jbr/Contents/Home/bin/java\" -version)"
+    ]
+  }
+}

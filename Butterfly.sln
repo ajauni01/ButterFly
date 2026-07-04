@@ -1,0 +1,57 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{15E4F2A1-7E04-4265-A540-2373272DF6D3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Butterfly.Shared", "src\Butterfly.Shared\Butterfly.Shared.csproj", "{36F96A10-12C4-45B9-A964-737B779C2E36}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Butterfly.Data", "src\Butterfly.Data\Butterfly.Data.csproj", "{1526A103-FCA6-40B2-BB82-96BCB08AB381}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Butterfly.Api", "src\Butterfly.Api\Butterfly.Api.csproj", "{BBFAAD8A-A93B-4A71-A2F3-63C9338FD425}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Butterfly.Mobile", "src\Butterfly.Mobile\Butterfly.Mobile.csproj", "{E78B5526-6BC2-42D2-BDD7-1C1887732880}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{62F7C17D-153A-48FD-BE68-623D5DF5A3C2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Butterfly.Api.Tests", "tests\Butterfly.Api.Tests\Butterfly.Api.Tests.csproj", "{26217350-3351-4637-A35C-B644FEA4D6E8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{36F96A10-12C4-45B9-A964-737B779C2E36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36F96A10-12C4-45B9-A964-737B779C2E36}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36F96A10-12C4-45B9-A964-737B779C2E36}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36F96A10-12C4-45B9-A964-737B779C2E36}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1526A103-FCA6-40B2-BB82-96BCB08AB381}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1526A103-FCA6-40B2-BB82-96BCB08AB381}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1526A103-FCA6-40B2-BB82-96BCB08AB381}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1526A103-FCA6-40B2-BB82-96BCB08AB381}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BBFAAD8A-A93B-4A71-A2F3-63C9338FD425}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BBFAAD8A-A93B-4A71-A2F3-63C9338FD425}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BBFAAD8A-A93B-4A71-A2F3-63C9338FD425}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BBFAAD8A-A93B-4A71-A2F3-63C9338FD425}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E78B5526-6BC2-42D2-BDD7-1C1887732880}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E78B5526-6BC2-42D2-BDD7-1C1887732880}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E78B5526-6BC2-42D2-BDD7-1C1887732880}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E78B5526-6BC2-42D2-BDD7-1C1887732880}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26217350-3351-4637-A35C-B644FEA4D6E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26217350-3351-4637-A35C-B644FEA4D6E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26217350-3351-4637-A35C-B644FEA4D6E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26217350-3351-4637-A35C-B644FEA4D6E8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{36F96A10-12C4-45B9-A964-737B779C2E36} = {15E4F2A1-7E04-4265-A540-2373272DF6D3}
+		{1526A103-FCA6-40B2-BB82-96BCB08AB381} = {15E4F2A1-7E04-4265-A540-2373272DF6D3}
+		{BBFAAD8A-A93B-4A71-A2F3-63C9338FD425} = {15E4F2A1-7E04-4265-A540-2373272DF6D3}
+		{E78B5526-6BC2-42D2-BDD7-1C1887732880} = {15E4F2A1-7E04-4265-A540-2373272DF6D3}
+		{26217350-3351-4637-A35C-B644FEA4D6E8} = {62F7C17D-153A-48FD-BE68-623D5DF5A3C2}
+	EndGlobalSection
+EndGlobal
