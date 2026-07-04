@@ -35,7 +35,18 @@
       "Bash(echo \"git user: $\\(git config user.name\\) <$\\(git config user.email\\)>\")",
       "Bash(/usr/libexec/java_home -V)",
       "Read(//Applications/Android Studio.app/Contents/jbr/Contents/Home/bin/**)",
-      "Bash(\"/Applications/Android Studio.app/Contents/jbr/Contents/Home/bin/java\" -version)"
+      "Bash(\"/Applications/Android Studio.app/Contents/jbr/Contents/Home/bin/java\" -version)",
+      "Bash(defaults read *)",
+      "Read(//Library/Developer/CoreSimulator/Profiles/**)",
+      "Read(//Applications/Xcode.app/Contents/Developer/Platforms/**)",
+      "Bash(git add *)",
+      "Bash(git commit -q -m 'Mobile: target iOS + MacCatalyst alongside Android *)",
+      "Bash(sudo -n true)",
+      "Bash(xcrun simctl *)",
+      "Bash(xcodebuild -downloadPlatform iOS -h)",
+      "Bash(xcodebuild -downloadPlatform iOS)",
+      "Bash(git commit -q -m 'Phase 2: Butterfly.Shared — enums + all DTOs *)",
+      "Bash(grep -iA8 \"Unhandled exception processing GET /api/me\" /private/tmp/claude-501/-Users-aunik-Projects-ButterFly/49c417e6-577a-413b-86ed-8bf82a6b32f5/scratchpad/api-run.log)"
     ]
   }
 }
