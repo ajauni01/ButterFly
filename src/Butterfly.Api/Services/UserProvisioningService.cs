@@ -1,4 +1,5 @@
 using Butterfly.Api.Auth;
+using Butterfly.Api.Infrastructure;
 using Butterfly.Data;
 using Butterfly.Data.Entities;
 using Butterfly.Shared.Dtos;
@@ -19,6 +20,12 @@ public interface IUserProvisioningService
 
     /// <summary>Resolve the current caller's <see cref="AppUser"/>, provisioning if needed.</summary>
     Task<AppUser> EnsureCurrentAppUserAsync(CancellationToken ct = default);
+
+    /// <summary>The current caller's Mentor record (they must hold the Mentor role).</summary>
+    Task<Mentor> GetCurrentMentorAsync(CancellationToken ct = default);
+
+    /// <summary>The current caller's CareManager record (they must hold the CareManager role).</summary>
+    Task<CareManager> GetCurrentCareManagerAsync(CancellationToken ct = default);
 }
 
 public sealed class UserProvisioningService : IUserProvisioningService
@@ -97,6 +104,20 @@ public sealed class UserProvisioningService : IUserProvisioningService
     {
         var user = await EnsureCurrentAppUserAsync(ct);
         return ToDto(user);
+    }
+
+    public async Task<Mentor> GetCurrentMentorAsync(CancellationToken ct = default)
+    {
+        var user = await EnsureCurrentAppUserAsync(ct);
+        return user.Mentor
+            ?? throw ApiException.Forbidden("The current user is not a mentor.");
+    }
+
+    public async Task<CareManager> GetCurrentCareManagerAsync(CancellationToken ct = default)
+    {
+        var user = await EnsureCurrentAppUserAsync(ct);
+        return user.CareManager
+            ?? throw ApiException.Forbidden("The current user is not a care manager.");
     }
 
     private void AttachRoleExtension(AppUser user, UserRole role)

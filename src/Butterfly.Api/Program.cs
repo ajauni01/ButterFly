@@ -44,6 +44,7 @@ builder.Services.AddDbContext<ButterflyDbContext>(options =>
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 builder.Services.AddScoped<IUserProvisioningService, UserProvisioningService>();
+builder.Services.AddScoped<IMatchingService, MatchingService>();
 
 // ---- MVC + JSON ----
 builder.Services
@@ -98,7 +99,7 @@ builder.Services.AddSwaggerGen(options =>
             {
                 AuthorizationCode = new OpenApiOAuthFlow
                 {
-                    AuthorizationUrl = new Uri($"{authority.TrimEnd('/')}/oauth2/v2.0/authorize"),
+                    AuthorizationUrl = new Uri($"{authority!.TrimEnd('/')}/oauth2/v2.0/authorize"),
                     TokenUrl = new Uri($"{authority.TrimEnd('/')}/oauth2/v2.0/token"),
                     Scopes = new Dictionary<string, string>
                     {
