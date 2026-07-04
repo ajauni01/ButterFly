@@ -49,7 +49,9 @@
       "Bash(grep -iA8 \"Unhandled exception processing GET /api/me\" /private/tmp/claude-501/-Users-aunik-Projects-ButterFly/49c417e6-577a-413b-86ed-8bf82a6b32f5/scratchpad/api-run.log)",
       "Bash(rm -f MainPage.xaml MainPage.xaml.cs AppShell.xaml AppShell.xaml.cs)",
       "Bash(ls *.xaml*)",
-      "Bash(git commit -q -m 'Phases 8-9: Butterfly.Mobile — MSAL auth shell + 3 role dashboards *)"
+      "Bash(git commit -q -m 'Phases 8-9: Butterfly.Mobile — MSAL auth shell + 3 role dashboards *)",
+      "Bash(git commit -q -m 'Phase 10: finalize README + pin API https port to 5001 *)",
+      "Bash(awk -F/ '{print $1\"/\"$2}')"
     ]
   }
 }
