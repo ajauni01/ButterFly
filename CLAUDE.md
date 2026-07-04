@@ -25,4 +25,4 @@ Work one build-order phase per turn. Run `dotnet build` and commit after each ph
 - .NET SDKs live user-locally in `~/.dotnet` (8.0.422 pinned via global.json; a 10.x SDK coexists). `DOTNET_ROOT=$HOME/.dotnet`.
 - Butterfly.Mobile targets `net8.0-android;net8.0-ios;net8.0-maccatalyst` (Android first, then iOS). No Windows/Tizen TFMs.
 - Workloads: `maui-android`, `maui-ios`, `maui-maccatalyst`. Android builds use Android Studio's bundled JDK 21 (paths in gitignored `.csproj.user`).
-- iOS builds need the full Xcode active: `sudo xcode-select -s /Applications/Xcode.app` + `sudo xcodebuild -license accept`. Xcode 26.3 is newer than what the .NET 8 iOS workload targets — watch for SDK-mismatch build errors.
+- iOS builds need the full Xcode active: `sudo xcode-select -s /Applications/Xcode.app/Contents/Developer` + `sudo xcodebuild -license accept`, plus an iOS simulator runtime (`xcodebuild -downloadPlatform iOS`). VERIFIED: scaffold builds clean for net8.0-ios against Xcode 26.3 despite the .NET 8 workload being older.
