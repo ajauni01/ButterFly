@@ -110,6 +110,8 @@ The MAUI client's public (non-secret) config lives in [`ButterflyConfig.cs`](src
    - Grant it delegated `access_as_user` on `Butterfly.Api` + admin consent.
 5. **Create test users** and assign each an App Role via *Enterprise applications → Butterfly.Api → Users and groups*.
 
+**Social sign-up (Google, etc.) & default role.** To let users sign up with Google, add Google as an identity provider (*External Identities → Identity providers → Google*, using an OAuth client from Google Cloud Console) and enable it on your sign-up/sign-in user flow. Self-service sign-ups do **not** receive an Entra App Role, so the API grants them the **Mentor** role by default (`DefaultRoleClaimsTransformation`) — the public-facing persona. **CareManager** and **Admin** remain invite-only: assign them explicitly in Entra, and they always take precedence when present.
+
 ---
 
 ## Azure SQL setup (portal, one-time)

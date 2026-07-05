@@ -36,6 +36,10 @@ builder.Services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationSch
 
 builder.Services.AddAuthorization();
 
+// Self-service sign-ups (e.g. Google) arrive with no Entra App Role; default them to Mentor so
+// they can use the app without an admin manually assigning a role. CareManager/Admin stay invite-only.
+builder.Services.AddScoped<Microsoft.AspNetCore.Authentication.IClaimsTransformation, DefaultRoleClaimsTransformation>();
+
 // ---- Persistence ----
 builder.Services.AddDbContext<ButterflyDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ButterflyDb")));
