@@ -27,6 +27,21 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">15.0</SupportedOSPlatformVersion>
 	</PropertyGroup>
 
+	<!-- iOS: MSAL's Keychain-backed token cache requires a keychain-access-groups entitlement. -->
+	<PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">
+		<CodesignEntitlements>Platforms/iOS/Entitlements.plist</CodesignEntitlements>
+	</PropertyGroup>
+
+	<!-- A keychain-access-groups entitlement normally forces a provisioning profile. Simulator
+	     builds ad-hoc sign and need none, so drop that requirement for simulator RIDs. This is
+	     fixed natively in .NET 10; until then this target is required. See dotnet/maui#19148. -->
+	<Target Name="NoProvisioningProfiles" BeforeTargets="_DetectSigningIdentity"
+	        Condition="$(RuntimeIdentifier.Contains('simulator'))">
+		<PropertyGroup>
+			<CodesignRequireProvisioningProfile>false</CodesignRequireProvisioningProfile>
+		</PropertyGroup>
+	</Target>
+
 	<ItemGroup>
 		<!-- App Icon -->
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />

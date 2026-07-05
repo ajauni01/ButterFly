@@ -14,9 +14,59 @@ public sealed class AuthService : IAuthService
 {
     private const string CacheKey = "butterfly_msal_cache";
 
-    private readonly IPublicClientApplication _pca;
+    private readonly Lazy<IPublicClientApplication> _pca;
 
     public AuthService()
+    {
+        // Build MSAL lazily so login-page construction can't crash the app before the user even taps
+        // sign-in; configuration problems surface through the sign-in flow instead.
+        _pca = new Lazy<IPublicClientApplication>(CreatePublicClientApplication);
+    }
+
+    public async Task<UserRole> SignInAsync(CancellationToken ct = default)
+    {
+        AuthenticationResult result;
+        try
+        {
+            var account = (await _pca.Value.GetAccountsAsync()).FirstOrDefault();
+            result = await _pca.Value.AcquireTokenSilent(ButterflyConfig.Scopes, account).ExecuteAsync(ct);
+        }
+        catch (MsalUiRequiredException)
+        {
+            result = await _pca.Value.AcquireTokenInteractive(ButterflyConfig.Scopes).ExecuteAsync(ct);
+        }
+
+        return ReadRole(result);
+    }
+
+    public async Task<string?> GetAccessTokenSilentAsync(CancellationToken ct = default)
+    {
+        var account = (await _pca.Value.GetAccountsAsync()).FirstOrDefault();
+        if (account is null)
+            return null;
+
+        try
+        {
+            var result = await _pca.Value.AcquireTokenSilent(ButterflyConfig.Scopes, account).ExecuteAsync(ct);
+            return result.AccessToken;
+        }
+        catch (MsalUiRequiredException)
+        {
+            return null; // caller should route back to sign-in
+        }
+    }
+
+    public async Task<bool> HasCachedAccountAsync() =>
+        (await _pca.Value.GetAccountsAsync()).Any();
+
+    public async Task SignOutAsync()
+    {
+        foreach (var account in await _pca.Value.GetAccountsAsync())
+            await _pca.Value.RemoveAsync(account);
+        SecureStorage.Default.Remove(CacheKey);
+    }
+
+    private static IPublicClientApplication CreatePublicClientApplication()
     {
         var builder = PublicClientApplicationBuilder
             .Create(ButterflyConfig.ClientId)
@@ -27,51 +77,17 @@ public sealed class AuthService : IAuthService
         builder = builder.WithParentActivityOrWindow(() => Platform.CurrentActivity);
 #endif
 
-        _pca = builder.Build();
-        RegisterCache(_pca.UserTokenCache);
-    }
+        var pca = builder.Build();
 
-    public async Task<UserRole> SignInAsync(CancellationToken ct = default)
-    {
-        AuthenticationResult result;
-        try
-        {
-            var account = (await _pca.GetAccountsAsync()).FirstOrDefault();
-            result = await _pca.AcquireTokenSilent(ButterflyConfig.Scopes, account).ExecuteAsync(ct);
-        }
-        catch (MsalUiRequiredException)
-        {
-            result = await _pca.AcquireTokenInteractive(ButterflyConfig.Scopes).ExecuteAsync(ct);
-        }
+        // On Android/iOS/MacCatalyst, MSAL.NET manages a secure, platform-native token cache
+        // (Android KeyStore / iOS Keychain) automatically. Registering a custom cache serializer
+        // throws PlatformNotSupportedException on these platforms — custom serialization exists
+        // only for desktop/.NET Core. Every TFM here is mobile, so this is compiled out.
+#if !ANDROID && !IOS && !MACCATALYST
+        RegisterCache(pca.UserTokenCache);
+#endif
 
-        return ReadRole(result);
-    }
-
-    public async Task<string?> GetAccessTokenSilentAsync(CancellationToken ct = default)
-    {
-        var account = (await _pca.GetAccountsAsync()).FirstOrDefault();
-        if (account is null)
-            return null;
-
-        try
-        {
-            var result = await _pca.AcquireTokenSilent(ButterflyConfig.Scopes, account).ExecuteAsync(ct);
-            return result.AccessToken;
-        }
-        catch (MsalUiRequiredException)
-        {
-            return null; // caller should route back to sign-in
-        }
-    }
-
-    public async Task<bool> HasCachedAccountAsync() =>
-        (await _pca.GetAccountsAsync()).Any();
-
-    public async Task SignOutAsync()
-    {
-        foreach (var account in await _pca.GetAccountsAsync())
-            await _pca.RemoveAsync(account);
-        SecureStorage.Default.Remove(CacheKey);
+        return pca;
     }
 
     private static UserRole ReadRole(AuthenticationResult result)
@@ -118,7 +134,8 @@ public sealed class AuthService : IAuthService
         }
     }
 
-    // ---- MSAL token cache persisted to SecureStorage ----
+    // ---- MSAL token cache persisted to SecureStorage (desktop/.NET Core only) ----
+#if !ANDROID && !IOS && !MACCATALYST
     private static void RegisterCache(ITokenCache cache)
     {
         cache.SetBeforeAccessAsync(async args =>
@@ -137,4 +154,5 @@ public sealed class AuthService : IAuthService
             }
         });
     }
+#endif
 }

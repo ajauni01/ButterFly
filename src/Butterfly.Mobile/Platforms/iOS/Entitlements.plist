@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+    <dict>
+        <!-- MSAL persists its token cache in the iOS Keychain and initializes it eagerly when
+             PublicClientApplication is built. Without a keychain-access-groups entitlement, that
+             init fails with errSecMissingEntitlement (-34018) and the app crashes before any UI.
+             The com.microsoft.adalcache group is MSAL's shared group; the app's own group covers
+             MSAL's default (no WithIosKeychainSecurityGroup) path. See https://aka.ms/msal-net-ios. -->
+        <key>keychain-access-groups</key>
+        <array>
+            <string>$(AppIdentifierPrefix)com.microsoft.adalcache</string>
+            <string>$(AppIdentifierPrefix)org.butterfly.mobile</string>
+        </array>
+    </dict>
+</plist>
