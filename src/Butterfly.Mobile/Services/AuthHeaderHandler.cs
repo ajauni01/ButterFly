@@ -9,9 +9,9 @@ namespace Butterfly.Mobile.Services;
 /// </summary>
 public sealed class AuthHeaderHandler : DelegatingHandler
 {
-    private readonly IAuthService _auth;
+    private readonly IAuthenticationService _auth;
 
-    public AuthHeaderHandler(IAuthService auth) => _auth = auth;
+    public AuthHeaderHandler(IAuthenticationService auth) => _auth = auth;
 
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {

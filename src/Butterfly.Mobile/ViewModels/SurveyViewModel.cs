@@ -8,10 +8,10 @@ namespace Butterfly.Mobile.ViewModels;
 /// <summary>Mentor values/interests survey. Comma-separated entry kept simple for the pilot.</summary>
 public sealed partial class SurveyViewModel : BaseViewModel
 {
-    private readonly IButterflyApi _api;
+    private readonly IApiClient _api;
     private readonly IAppNavigator _navigator;
 
-    public SurveyViewModel(IButterflyApi api, IAppNavigator navigator)
+    public SurveyViewModel(IApiClient api, IAppNavigator navigator)
     {
         _api = api;
         _navigator = navigator;

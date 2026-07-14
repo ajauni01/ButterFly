@@ -8,9 +8,9 @@ namespace Butterfly.Mobile.ViewModels;
 /// <summary>Admin dashboard: the pending-profile approval queue with approve/reject actions.</summary>
 public sealed partial class AdminViewModel : BaseViewModel
 {
-    private readonly IButterflyApi _api;
+    private readonly IApiClient _api;
 
-    public AdminViewModel(IButterflyApi api)
+    public AdminViewModel(IApiClient api)
     {
         _api = api;
         Title = "Pending Approvals";

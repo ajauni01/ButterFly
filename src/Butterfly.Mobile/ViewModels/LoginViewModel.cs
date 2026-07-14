@@ -5,10 +5,10 @@ namespace Butterfly.Mobile.ViewModels;
 
 public sealed partial class LoginViewModel : BaseViewModel
 {
-    private readonly IAuthService _auth;
+    private readonly IAuthenticationService _auth;
     private readonly IAppNavigator _navigator;
 
-    public LoginViewModel(IAuthService auth, IAppNavigator navigator)
+    public LoginViewModel(IAuthenticationService auth, IAppNavigator navigator)
     {
         _auth = auth;
         _navigator = navigator;
@@ -16,7 +16,12 @@ public sealed partial class LoginViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    private async Task SignInAsync()
+    private Task SignInWithGoogleAsync() => SignInThroughUserFlowAsync();
+
+    [RelayCommand]
+    private Task ContinueWithEmailAsync() => SignInThroughUserFlowAsync();
+
+    private async Task SignInThroughUserFlowAsync()
     {
         await RunAsync(async () =>
         {

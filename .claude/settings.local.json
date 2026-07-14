@@ -51,7 +51,13 @@
       "Bash(ls *.xaml*)",
       "Bash(git commit -q -m 'Phases 8-9: Butterfly.Mobile — MSAL auth shell + 3 role dashboards *)",
       "Bash(git commit -q -m 'Phase 10: finalize README + pin API https port to 5001 *)",
-      "Bash(awk -F/ '{print $1\"/\"$2}')"
+      "Bash(awk -F/ '{print $1\"/\"$2}')",
+      "Skill(run)",
+      "Skill(run:*)",
+      "Bash(open -a Simulator)",
+      "Bash(grep -vE \"\\\\.sln$\")",
+      "Bash(git commit -q -m 'Mobile: MSAL iOS keychain entitlements + lazy init + native token cache *)",
+      "Bash(git commit -q -m 'API: default self-service sign-ups to Mentor role *)"
     ]
   }
 }

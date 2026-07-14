@@ -8,9 +8,14 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+var entraAuthority = BuildUserFlowAuthority(builder.Configuration);
+var entraAudience = GetRequiredConfigurationValue(builder.Configuration, "EntraExternalId:Audience");
+var entraClientId = GetRequiredConfigurationValue(builder.Configuration, "EntraExternalId:ClientId");
+var apiScopeUri = GetRequiredConfigurationValue(builder.Configuration, "EntraExternalId:ApiScopeUri");
 
 // ---- Authentication: Microsoft Entra External ID (CIAM) ----
 // Validates Entra-issued JWTs. App Roles arrive in the "roles" claim; Microsoft.Identity.Web
@@ -22,6 +27,14 @@ builder.Services
 // Emit our consistent ErrorDto on auth challenge/forbid instead of an empty 401/403 body.
 builder.Services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
 {
+    options.Authority = entraAuthority;
+    options.Audience = entraAudience;
+    options.TokenValidationParameters.ValidAudiences = new[] { entraAudience, entraClientId };
+    options.TokenValidationParameters.RoleClaimType = "roles";
+    options.TokenValidationParameters.NameClaimType = "name";
+    options.TokenValidationParameters.ValidateIssuer = true;
+    options.TokenValidationParameters.ValidateAudience = true;
+
     options.Events ??= new JwtBearerEvents();
     options.Events.OnChallenge = async ctx =>
     {
@@ -82,45 +95,31 @@ builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "Butterfly API", Version = "v1" });
 
-    var authority = builder.Configuration["EntraExternalId:Authority"];
-    var apiScopeUri = builder.Configuration["EntraExternalId:ApiScopeUri"];
-    var scopeName = builder.Configuration["Swagger:ApiScope"] ?? "access_as_user";
-
-    // Only wire the OAuth2 flow when real (non-placeholder) config is present. The default
-    // appsettings ships "<your-tenant>" markers that are not valid URIs — skip them so Swagger
-    // still renders before the Entra tenant exists.
-    var hasRealAuthority = !string.IsNullOrWhiteSpace(authority)
-        && !authority.Contains('<')
-        && Uri.TryCreate(authority, UriKind.Absolute, out _);
-
-    if (hasRealAuthority && !string.IsNullOrWhiteSpace(apiScopeUri) && !apiScopeUri.Contains('<'))
+    var oauthAuthority = BuildOAuthEndpointAuthority(entraAuthority);
+    var scheme = new OpenApiSecurityScheme
     {
-        var fullScope = $"{apiScopeUri.TrimEnd('/')}/{scopeName}";
-        var scheme = new OpenApiSecurityScheme
+        Type = SecuritySchemeType.OAuth2,
+        Flows = new OpenApiOAuthFlows
         {
-            Type = SecuritySchemeType.OAuth2,
-            Flows = new OpenApiOAuthFlows
+            AuthorizationCode = new OpenApiOAuthFlow
             {
-                AuthorizationCode = new OpenApiOAuthFlow
+                AuthorizationUrl = new Uri($"{oauthAuthority}/oauth2/v2.0/authorize"),
+                TokenUrl = new Uri($"{oauthAuthority}/oauth2/v2.0/token"),
+                Scopes = new Dictionary<string, string>
                 {
-                    AuthorizationUrl = new Uri($"{authority!.TrimEnd('/')}/oauth2/v2.0/authorize"),
-                    TokenUrl = new Uri($"{authority.TrimEnd('/')}/oauth2/v2.0/token"),
-                    Scopes = new Dictionary<string, string>
-                    {
-                        [fullScope] = "Access the Butterfly API as the signed-in user"
-                    }
+                    [apiScopeUri] = "Access the Butterfly API as the signed-in user"
                 }
             }
-        };
-        options.AddSecurityDefinition("EntraExternalId", scheme);
-        options.AddSecurityRequirement(new OpenApiSecurityRequirement
+        }
+    };
+    options.AddSecurityDefinition("EntraExternalId", scheme);
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        [new OpenApiSecurityScheme
         {
-            [new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "EntraExternalId" }
-            }] = new List<string>()
-        });
-    }
+            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "EntraExternalId" }
+        }] = new List<string> { apiScopeUri }
+    });
 
     // Surface XML docs from the API and Shared contracts.
     foreach (var xml in new[] { "Butterfly.Api.xml", "Butterfly.Shared.xml" })
@@ -143,6 +142,7 @@ if (app.Environment.IsDevelopment())
         ui.OAuthClientId(builder.Configuration["Swagger:ClientId"]);
         ui.OAuthUsePkce();
         ui.OAuthScopeSeparator(" ");
+        ui.OAuthScopes(apiScopeUri);
     });
 
     // Dev-only: ensure schema + demo data exist without a manual migration step.
@@ -169,6 +169,39 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+static string BuildUserFlowAuthority(IConfiguration configuration)
+{
+    var instance = GetRequiredConfigurationValue(configuration, "EntraExternalId:Instance").TrimEnd('/');
+    var tenantId = GetRequiredConfigurationValue(configuration, "EntraExternalId:TenantId");
+    var userFlow = GetRequiredConfigurationValue(configuration, "UserFlow:Name");
+    var configuredAuthority = configuration["EntraExternalId:Authority"]?.Trim().TrimEnd('/');
+
+    if (!string.IsNullOrWhiteSpace(configuredAuthority)
+        && configuredAuthority.Contains(userFlow, StringComparison.OrdinalIgnoreCase)
+        && configuredAuthority.EndsWith("/v2.0", StringComparison.OrdinalIgnoreCase))
+    {
+        return configuredAuthority;
+    }
+
+    return $"{instance}/{tenantId}/{userFlow}/v2.0";
+}
+
+static string BuildOAuthEndpointAuthority(string userFlowAuthority)
+{
+    const string v2Segment = "/v2.0";
+    return userFlowAuthority.EndsWith(v2Segment, StringComparison.OrdinalIgnoreCase)
+        ? userFlowAuthority[..^v2Segment.Length]
+        : userFlowAuthority.TrimEnd('/');
+}
+
+static string GetRequiredConfigurationValue(IConfiguration configuration, string key)
+{
+    var value = configuration[key];
+    return !string.IsNullOrWhiteSpace(value) && !value.Contains('<')
+        ? value
+        : throw new InvalidOperationException($"Missing required configuration value '{key}'.");
+}
 
 /// <summary>Exposed so integration tests can host the API via WebApplicationFactory.</summary>
 public partial class Program { }

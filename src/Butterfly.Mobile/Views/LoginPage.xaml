@@ -6,17 +6,39 @@
              x:Class="Butterfly.Mobile.Views.LoginPage"
              Title="Butterfly">
     <Grid RowDefinitions="*,Auto,*" Padding="32">
-        <VerticalStackLayout Grid.Row="1" Spacing="16" HorizontalOptions="Center">
+        <VerticalStackLayout Grid.Row="1" Spacing="14" HorizontalOptions="Center" WidthRequest="320">
             <Label Text="🦋" FontSize="64" HorizontalOptions="Center" />
             <Label Text="Butterfly"
                    FontSize="32" FontAttributes="Bold" HorizontalOptions="Center" />
             <Label Text="Cross-border micro-mentorship"
                    FontSize="16" HorizontalOptions="Center" HorizontalTextAlignment="Center" />
 
-            <Button Text="Sign in with Entra"
-                    Command="{Binding SignInCommand}"
+            <Button Text="Sign in with Google"
+                    Command="{Binding SignInWithGoogleCommand}"
                     IsEnabled="{Binding IsNotBusy}"
-                    Margin="0,24,0,0" />
+                    Margin="0,20,0,0" />
+
+            <Label Text="Or continue with email/password"
+                   FontSize="12"
+                   TextColor="Gray"
+                   HorizontalOptions="Center" />
+
+            <Entry Placeholder="Email"
+                   IsEnabled="False" />
+            <Entry Placeholder="Password"
+                   IsPassword="True"
+                   IsEnabled="False" />
+
+            <Button Text="Continue with email"
+                    Command="{Binding ContinueWithEmailCommand}"
+                    IsEnabled="{Binding IsNotBusy}"
+                    BackgroundColor="Transparent"
+                    TextColor="#512BD4" />
+
+            <Label Text="Google and email/password sign-in are hosted by the Entra External ID user flow in a secure browser window."
+                   FontSize="12"
+                   TextColor="Gray"
+                   HorizontalTextAlignment="Center" />
 
             <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
 

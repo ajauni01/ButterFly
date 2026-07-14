@@ -13,9 +13,9 @@ namespace Butterfly.Mobile.ViewModels;
 /// </summary>
 public sealed partial class MentorViewModel : BaseViewModel
 {
-    private readonly IButterflyApi _api;
+    private readonly IApiClient _api;
 
-    public MentorViewModel(IButterflyApi api)
+    public MentorViewModel(IApiClient api)
     {
         _api = api;
         Title = "Find a Mentee";

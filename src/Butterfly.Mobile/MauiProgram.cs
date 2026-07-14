@@ -1,4 +1,5 @@
 using Butterfly.Mobile.Configuration;
+using Butterfly.Mobile.Extensions;
 using Butterfly.Mobile.Services;
 using Butterfly.Mobile.ViewModels;
 using Butterfly.Mobile.Views;
@@ -23,7 +24,9 @@ public static class MauiProgram
             });
 
         // ---- Auth + navigation ----
-        builder.Services.AddSingleton<IAuthService, AuthService>();
+        builder.Services.AddSingleton<AuthenticationService>();
+        builder.Services.AddSingleton<IAuthenticationService>(sp => sp.GetRequiredService<AuthenticationService>());
+        builder.Services.AddSingleton<IAuthService>(sp => sp.GetRequiredService<AuthenticationService>());
         builder.Services.AddSingleton<IAppNavigator, AppNavigator>();
         builder.Services.AddTransient<AuthHeaderHandler>();
 
@@ -31,12 +34,13 @@ public static class MauiProgram
         builder.Services
             .AddRefitClient<IButterflyApi>()
             .ConfigureHttpClient(c => c.BaseAddress = new Uri(ButterflyConfig.ApiBaseUrl))
-            .AddHttpMessageHandler<AuthHeaderHandler>()
+            .AddButterflyAccessToken()
             .AddPolicyHandler(RetryPolicy())
 #if DEBUG
             .ConfigurePrimaryHttpMessageHandler(() => DevHandler())
 #endif
             ;
+        builder.Services.AddTransient<IApiClient, ApiClient>();
 
         // ---- View models ----
         builder.Services.AddTransient<LoginViewModel>();

@@ -10,9 +10,9 @@ namespace Butterfly.Mobile.ViewModels;
 /// <summary>Care manager dashboard: list own mentee profiles (with status badges) and create new ones.</summary>
 public sealed partial class CareManagerViewModel : BaseViewModel
 {
-    private readonly IButterflyApi _api;
+    private readonly IApiClient _api;
 
-    public CareManagerViewModel(IButterflyApi api)
+    public CareManagerViewModel(IApiClient api)
     {
         _api = api;
         Title = "My Mentees";

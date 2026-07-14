@@ -1,28 +1,29 @@
 namespace Butterfly.Mobile.Configuration;
 
 /// <summary>
-/// Client configuration. Fill these in after the Entra tenant and API are set up (see README).
+/// Client configuration for Microsoft Entra External ID (CIAM).
 /// These are NOT secrets — a native public client has no client secret; MSAL uses auth-code + PKCE.
 /// The only value that must match server-side is <see cref="ApiScope"/>.
 /// </summary>
 public static class ButterflyConfig
 {
-    /// <summary>Your External ID tenant subdomain, e.g. "butterflydev" for butterflydev.ciamlogin.com.</summary>
-    public const string TenantSubdomain = "butterflydev";
+    public const string TenantSubdomain = "butterflyciam";
+    public const string TenantId = "99ab3d07-4cdd-4307-b06c-50210e64a56c";
+    public const string UserFlow = "B2C_1_signupsignin";
 
-    /// <summary>The CIAM authority. Built from the subdomain.</summary>
-    public static string Authority => $"https://{TenantSubdomain}.ciamlogin.com/";
+    /// <summary>The CIAM user-flow authority. Entra handles Google and email/password here.</summary>
+    public static string Authority => $"https://{TenantSubdomain}.ciamlogin.com/{TenantId}/{UserFlow}/v2.0";
 
     /// <summary>The Butterfly.Client (public/mobile) app registration's Application (client) ID.</summary>
-    public const string ClientId = "22222222-2222-2222-2222-222222222222";
+    public const string ClientId = "578742b9-68d1-4679-a658-fa6a1d8e528c";
 
     /// <summary>
     /// The delegated scope exposed by the API app registration, fully qualified:
     /// api://&lt;api-client-id&gt;/access_as_user.
     /// </summary>
-    public const string ApiScope = "api://11111111-1111-1111-1111-111111111111/access_as_user";
+    public const string ApiScope = "api://2b22acf8-4674-4bef-b041-7e135c2edd67/access_as_user";
 
-    public static string[] Scopes => new[] { ApiScope };
+    public static string[] Scopes => new[] { ApiScope, "openid", "profile" };
 
     /// <summary>
     /// Base URL of the running API. Android emulator reaches the host machine at 10.0.2.2.

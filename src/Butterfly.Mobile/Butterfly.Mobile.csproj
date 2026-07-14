@@ -33,12 +33,13 @@
 	</PropertyGroup>
 
 	<!-- A keychain-access-groups entitlement normally forces a provisioning profile. Simulator
-	     builds ad-hoc sign and need none, so drop that requirement for simulator RIDs. This is
-	     fixed natively in .NET 10; until then this target is required. See dotnet/maui#19148. -->
+	     builds ad-hoc sign and need none, so drop that requirement and use simulator-safe entitlements. -->
 	<Target Name="NoProvisioningProfiles" BeforeTargets="_DetectSigningIdentity"
-	        Condition="$(RuntimeIdentifier.Contains('simulator'))">
+	        Condition="$(RuntimeIdentifier.Contains('simulator')) and $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">
 		<PropertyGroup>
 			<CodesignRequireProvisioningProfile>false</CodesignRequireProvisioningProfile>
+			<!-- On simulator there is no provisioning profile, so resolve $(AppIdentifierPrefix) as empty. -->
+			<AppIdentifierPrefix></AppIdentifierPrefix>
 		</PropertyGroup>
 	</Target>
 
@@ -63,7 +64,8 @@
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
 		<PackageReference Include="Microsoft.Extensions.Http.Polly" Version="8.0.11" />
-		<PackageReference Include="Microsoft.Identity.Client" Version="4.66.2" />
+		<PackageReference Include="Microsoft.Identity.Client" Version="4.86.0" />
+		<PackageReference Include="Microsoft.Identity.Client.Extensions.Msal" Version="4.86.0" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.1" />
