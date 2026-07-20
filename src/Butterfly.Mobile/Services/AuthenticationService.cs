@@ -81,6 +81,14 @@ public sealed class AuthenticationService : IAuthService
         builder = builder.WithParentActivityOrWindow(() => Platform.CurrentActivity);
 #endif
 
+#if IOS || MACCATALYST
+        // Pin the keychain group MSAL uses for its token cache. Without this, MSAL falls back to the
+        // shared "publisher" keychain, which the app is not entitled to reach and surfaces as
+        // cannot_access_publisher_keychain. The group must match a keychain-access-groups entry in
+        // Platforms/iOS/Entitlements.plist (MSAL prepends $(AppIdentifierPrefix) automatically).
+        builder = builder.WithIosKeychainSecurityGroup("com.microsoft.adalcache");
+#endif
+
         var pca = builder.Build();
 
         // On Android/iOS/MacCatalyst, MSAL.NET manages a secure, platform-native token cache

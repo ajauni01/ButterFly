@@ -2,11 +2,19 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
     <dict>
-        <!-- Local simulator runs do not have a provisioning profile, so keep group names plain. -->
+        <!-- MSAL persists its token cache in the iOS Keychain and accesses it when
+             PublicClientApplication is built. On a physical device, keychain-access-groups entries
+             MUST be prefixed with the app's team identifier ($(AppIdentifierPrefix) expands to
+             "<TeamID>."); a plain, unprefixed group is not an entitled group on device, and MSAL
+             fails with cannot_access_publisher_keychain when it reaches the shared
+             com.microsoft.adalcache group. On the simulator $(AppIdentifierPrefix) expands to an
+             empty string, so these same entries also work for ad-hoc simulator builds.
+             The MSAL builder pins WithIosKeychainSecurityGroup("com.microsoft.adalcache") to match
+             the first group here. See https://aka.ms/msal-net-ios-keychain. -->
         <key>keychain-access-groups</key>
         <array>
-            <string>com.microsoft.adalcache</string>
-            <string>org.butterfly.mobile</string>
+            <string>$(AppIdentifierPrefix)com.microsoft.adalcache</string>
+            <string>$(AppIdentifierPrefix)org.butterfly.mobile</string>
         </array>
     </dict>
 </plist>
